@@ -1,11 +1,11 @@
 // ==UserScript==
-// @name         给deepseek网站添加q查询参数：chat.deepseek.com/?q={query}
+// @name         给kimi网站添加q查询参数：kimi.moonshot.cn/?q={query}
 // @namespace    http://tampermonkey.net/
 // @version      2025-2-9
 // @description  从URL中提取q查询参数，填入对话框，提交搜索
 // @author       smilingpoplar
-// @match        https://chat.deepseek.com/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=deepseek.com
+// @match        https://kimi.moonshot.cn/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=moonshot.cn
 // @license      MIT
 // ==/UserScript==
 
@@ -31,27 +31,13 @@
             observer.observe(document.body, { childList: true, subtree: true });
         });
     };
-    const getReactProps = el => el[Object.keys(el).find(k => k.startsWith('__reactProps$'))];
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
 
-    const chat = await waitForElement("#chat-input");
+    const chat = await waitForElement('.chat-input-editor');
     chat.value = query;
-    getReactProps(chat)?.onChange?.({
-        target: { value: query },
-        currentTarget: { value: query },
-        preventDefault: () => { },
-        stopPropagation: () => { }
-    });
+    chat.dispatchEvent(new InputEvent('input', { data: query, bubbles: true }));
 
     await delay(500);
-    getReactProps(chat)?.onKeyDown?.({
-        key: 'Enter',
-        keyCode: 13,
-        shiftKey: false,
-        target: chat,
-        currentTarget: chat,
-        preventDefault: () => { },
-        stopPropagation: () => { },
-    });
+    chat.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', keyCode: 13, bubbles: true }));
 })();

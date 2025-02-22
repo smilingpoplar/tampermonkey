@@ -1,11 +1,11 @@
 // ==UserScript==
-// @name         给kimi网站添加q查询参数：kimi.moonshot.cn/?q={query}
+// @name         给baidu的ai搜索添加q查询参数：chat.baidu.com/?q={query}
 // @namespace    http://tampermonkey.net/
-// @version      2025-2-9
+// @version      2025-2-22
 // @description  从URL中提取q查询参数，填入对话框，提交搜索
 // @author       smilingpoplar
-// @match        https://kimi.moonshot.cn/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=moonshot.cn
+// @match        https://chat.baidu.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=baidu.com
 // @license      MIT
 // ==/UserScript==
 
@@ -34,7 +34,6 @@
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
     const simulateInput = (elem, text) => {
-        elem.focus();
         elem.value = text;
         if (elem.contentEditable === 'true') {
             elem.textContent = text;
@@ -46,9 +45,10 @@
         elem.dispatchEvent(new KeyboardEvent(event, { key: 'Enter', keyCode: 13, bubbles: true }));
     };
 
-    const chat = await waitForElement('.chat-input-editor');
+
+    const chat = await waitForElement('#chat-input-box');
     await delay(100);
     simulateInput(chat, query);
     await delay(100);
-    simulateEnter(chat);
+    simulateEnter(chat, 'keyup');
 })();

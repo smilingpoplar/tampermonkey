@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         给deepseek网站添加q查询参数：chat.deepseek.com/?q={query}
 // @namespace    http://tampermonkey.net/
-// @version      2025-2-9
+// @version      2025.9.10
 // @description  从URL中提取q查询参数，填入对话框，提交搜索
 // @author       smilingpoplar
 // @match        https://chat.deepseek.com/*
@@ -17,9 +17,7 @@
     const waitForElement = (selector) => {
         return new Promise((resolve) => {
             const elem = document.querySelector(selector);
-            if (elem) {
-                return resolve(elem);
-            }
+            if (elem) return resolve(elem);
 
             const observer = new MutationObserver(() => {
                 const elem = document.querySelector(selector);
@@ -31,27 +29,21 @@
             observer.observe(document.body, { childList: true, subtree: true });
         });
     };
-    const getReactProps = el => el[Object.keys(el).find(k => k.startsWith('__reactProps$'))];
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
+    const simulateInput = (elem, value) => {
+        const nativeSetter = Object.getOwnPropertyDescriptor(elem.constructor.prototype, "value")?.set;
+        if (nativeSetter) nativeSetter.call(elem, value);
+        elem.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    const simulateEnter = (elem, event = 'keydown') => {
+        elem.dispatchEvent(new KeyboardEvent(event, { key: 'Enter', keyCode: 13, bubbles: true }));
+    };
 
-    const chat = await waitForElement("#chat-input");
-    chat.value = query;
-    getReactProps(chat)?.onChange?.({
-        target: { value: query },
-        currentTarget: { value: query },
-        preventDefault: () => { },
-        stopPropagation: () => { }
-    });
 
-    await delay(500);
-    getReactProps(chat)?.onKeyDown?.({
-        key: 'Enter',
-        keyCode: 13,
-        shiftKey: false,
-        target: chat,
-        currentTarget: chat,
-        preventDefault: () => { },
-        stopPropagation: () => { },
-    });
+    const chat = await waitForElement("textarea.ds-scroll-area");
+    simulateInput(chat, query);
+
+    await delay(300);
+    simulateEnter(chat);
 })();

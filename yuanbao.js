@@ -1,12 +1,15 @@
 // ==UserScript==
-// @name         给腾讯元宝网站的deepseek搜索添加q查询参数：https://yuanbao.tencent.com/chat/?q={query}
+// @name         给腾讯元宝网站添加q查询参数：https://yuanbao.tencent.com/?q={query}
 // @namespace    http://tampermonkey.net/
-// @version      2025-3-2
-// @description  从URL中提取q查询参数，填入对话框，选择DeepSeek，提交搜索
+// @version      2025.9.10
+// @description  从URL中提取q查询参数，填入对话框，提交搜索
 // @author       smilingpoplar
-// @match        https://yuanbao.tencent.com/chat/*
+// @match        https://yuanbao.tencent.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=yuanbao.tencent.com
 // @license      MIT
+
+// 在网址跳转前获取参数q
+// @run-at       document-start
 // ==/UserScript==
 
 (async () => {
@@ -14,43 +17,39 @@
     const query = new URLSearchParams(window.location.search).get('q');
     if (!query) return;
 
-    const waitForElement = (selector) => {
-        return new Promise((resolve) => {
+    const waitForElement = (selector, timeout = 5000) => {
+        return new Promise((resolve, reject) => {
             const elem = document.querySelector(selector);
-            if (elem) {
-                return resolve(elem);
-            }
+            if (elem) return resolve(elem);
+
+            const timer = setTimeout(() => {
+                observer.disconnect();
+                reject(`元素加载超时：${selector}`);
+            }, timeout);
 
             const observer = new MutationObserver(() => {
                 const elem = document.querySelector(selector);
                 if (elem) {
+                    clearTimeout(timer);
                     observer.disconnect();
                     resolve(elem);
                 }
             });
-            observer.observe(document.body, { childList: true, subtree: true });
+            observer.observe(document.documentElement, { childList: true, subtree: true });
         });
     };
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
-    const simulateInput = (elem, text) => {
-        elem.value = text;
-        if (elem.contentEditable === 'true') {
-            elem.textContent = text;
-            elem.innerHTML = text;
-        }
-        elem.dispatchEvent(new InputEvent('input', { data: text, bubbles: true }));
+    const simulateInput = (elem, value) => {
+        elem[elem.contentEditable === 'true' ? 'textContent' : 'value'] = value;
+        elem.dispatchEvent(new InputEvent('input', { bubbles: true }));
     };
     const simulateEnter = (elem, event = 'keydown') => {
         elem.dispatchEvent(new KeyboardEvent(event, { key: 'Enter', keyCode: 13, bubbles: true }));
     };
 
 
-    const button = await waitForElement('button[dt-button-id="model_switch"]');
-    button.setAttribute("dt-model-id", "deep_seek");
-    button.setAttribute("dt-ext1", "deep_seek");
-    button.querySelector('span').textContent = "DeepSeek";
-
+    await waitForElement('.input-guide-v2', 3000); // 在.input-guide-v2出现前的对话会被清空，所以等它加载
     const chat = await waitForElement('.ql-editor');
     await delay(100);
     simulateInput(chat, query);

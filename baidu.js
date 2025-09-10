@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         给baidu的ai搜索添加q查询参数：chat.baidu.com/?q={query}
 // @namespace    http://tampermonkey.net/
-// @version      2025-2-22
+// @version      2025.9.10
 // @description  从URL中提取q查询参数，填入对话框，提交搜索
 // @author       smilingpoplar
 // @match        https://chat.baidu.com/*
@@ -17,9 +17,7 @@
     const waitForElement = (selector) => {
         return new Promise((resolve) => {
             const elem = document.querySelector(selector);
-            if (elem) {
-                return resolve(elem);
-            }
+            if (elem) return resolve(elem);
 
             const observer = new MutationObserver(() => {
                 const elem = document.querySelector(selector);
@@ -33,22 +31,18 @@
     };
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
-    const simulateInput = (elem, text) => {
-        elem.value = text;
-        if (elem.contentEditable === 'true') {
-            elem.textContent = text;
-            elem.innerHTML = text;
-        }
-        elem.dispatchEvent(new InputEvent('input', { data: text, bubbles: true }));
+    const simulateInput = (elem, value) => {
+        elem[elem.contentEditable === 'true' ? 'textContent' : 'value'] = value;
+        elem.dispatchEvent(new InputEvent('input', { bubbles: true }));
     };
     const simulateEnter = (elem, event = 'keydown') => {
         elem.dispatchEvent(new KeyboardEvent(event, { key: 'Enter', keyCode: 13, bubbles: true }));
     };
 
 
-    const chat = await waitForElement('#chat-input-box');
+    const chat = await waitForElement('#chat-textarea');
     await delay(100);
     simulateInput(chat, query);
     await delay(100);
-    simulateEnter(chat, 'keyup');
+    simulateEnter(chat);
 })();

@@ -32,7 +32,7 @@
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
     const simulateInput = (elem, value) => {
-        elem[elem.contentEditable === 'true' ? 'textContent' : 'value'] = value;
+        elem.value = value;
         elem.dispatchEvent(new InputEvent('input', { bubbles: true }));
     };
     const simulateEnter = (elem, event = 'keydown') => {
@@ -41,6 +41,7 @@
 
 
     const chat = await waitForElement('#chat-textarea');
+    chat.focus();
     await delay(100);
     simulateInput(chat, query);
     await delay(100);

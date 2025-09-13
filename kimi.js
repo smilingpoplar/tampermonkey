@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         给kimi网站添加q查询参数：www.kimi.com/?q={query}
 // @namespace    http://tampermonkey.net/
-// @version      2025.9.10
+// @version      2025.9.13
 // @description  从URL中提取q查询参数，填入对话框，提交搜索
 // @author       smilingpoplar
 // @match        https://www.kimi.com/*
@@ -31,11 +31,18 @@
     };
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
+    const simulateInput = (elem, value) => {
+        elem.textContent = value;
+        elem.dispatchEvent(new InputEvent('input', { data: value, bubbles: true }));
+    };
+    const simulateEnter = (elem, event = 'keydown') => {
+        elem.dispatchEvent(new KeyboardEvent(event, { key: 'Enter', keyCode: 13, bubbles: true }));
+    };
 
     const chat = await waitForElement('.chat-input-editor');
-    chat.value = query;
-    chat.dispatchEvent(new InputEvent('input', { data: query, bubbles: true }));
-
-    await delay(500);
-    chat.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', keyCode: 13, bubbles: true }));
+    chat.focus();
+    await delay(100);
+    simulateInput(chat, query);
+    await delay(100);
+    simulateEnter(chat);
 })();

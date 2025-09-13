@@ -1,11 +1,10 @@
 // ==UserScript==
 // @name         关掉弹窗
 // @namespace    http://tampermonkey.net/
-// @version      2025-2-28
+// @version      2025.2.28
 // @description  关掉弹窗
 // @author       smilingpoplar
 // @match        https://6do.world/*
-// @run-at       document-idle
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=6do.world
 // @license      MIT
 // ==/UserScript==
@@ -15,9 +14,7 @@
     const waitForElement = (selector) => {
         return new Promise((resolve) => {
             const elem = document.querySelector(selector);
-            if (elem) {
-                return resolve(elem);
-            }
+            if (elem) return resolve(elem);
 
             const observer = new MutationObserver(() => {
                 const elem = document.querySelector(selector);

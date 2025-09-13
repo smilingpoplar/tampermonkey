@@ -33,7 +33,7 @@
 
     const simulateInput = (elem, value) => {
         const nativeSetter = Object.getOwnPropertyDescriptor(elem.constructor.prototype, "value")?.set;
-        if (nativeSetter) nativeSetter.call(elem, value);
+        nativeSetter?.call(elem, value);
         elem.dispatchEvent(new Event("input", { bubbles: true }));
     }
     const simulateEnter = (elem, event = 'keydown') => {
@@ -42,8 +42,9 @@
 
 
     const chat = await waitForElement("textarea.ds-scroll-area");
+    chat.focus();
+    await delay(100);
     simulateInput(chat, query);
-
-    await delay(300);
+    await delay(100);
     simulateEnter(chat);
 })();

@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         给腾讯元宝网站添加q查询参数：https://yuanbao.tencent.com/?q={query}
+// @name         给腾讯元宝网站添加q查询参数：yuanbao.tencent.com/?q={query}
 // @namespace    http://tampermonkey.net/
 // @version      2025.9.10
 // @description  从URL中提取q查询参数，填入对话框，提交搜索
@@ -41,7 +41,7 @@
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
     const simulateInput = (elem, value) => {
-        elem[elem.contentEditable === 'true' ? 'textContent' : 'value'] = value;
+        elem.textContent = value;
         elem.dispatchEvent(new InputEvent('input', { bubbles: true }));
     };
     const simulateEnter = (elem, event = 'keydown') => {
@@ -51,6 +51,7 @@
 
     await waitForElement('.input-guide-v2', 3000); // 在.input-guide-v2出现前的对话会被清空，所以等它加载
     const chat = await waitForElement('.ql-editor');
+    chat.focus();
     await delay(100);
     simulateInput(chat, query);
     await delay(100);

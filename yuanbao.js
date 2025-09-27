@@ -49,7 +49,7 @@
     };
 
 
-    await waitForElement('.input-guide-v2', 3000); // 在.input-guide-v2出现前的对话会被清空，所以等它加载
+    await waitForElement('.input-guide-v2', 5000); // 在.input-guide-v2出现前的对话会被清空，所以等它加载
     const chat = await waitForElement('.ql-editor');
     chat.focus();
     await delay(100);

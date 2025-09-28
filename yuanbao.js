@@ -5,11 +5,9 @@
 // @description  从URL中提取q查询参数，填入对话框，提交搜索
 // @author       smilingpoplar
 // @match        https://yuanbao.tencent.com/*
+// @run-at       document-start // 在网址跳转前获取参数q
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=yuanbao.tencent.com
 // @license      MIT
-
-// 在网址跳转前获取参数q
-// @run-at       document-start
 // ==/UserScript==
 
 (async () => {
@@ -17,20 +15,22 @@
     const query = new URLSearchParams(window.location.search).get('q');
     if (!query) return;
 
-    const waitForElement = (selector, timeout = 5000) => {
+    const waitForElement = (selector, timeout) => {
         return new Promise((resolve, reject) => {
             const elem = document.querySelector(selector);
             if (elem) return resolve(elem);
 
-            const timer = setTimeout(() => {
-                observer.disconnect();
-                reject(`元素加载超时：${selector}`);
-            }, timeout);
-
+            let timer;
+            if (typeof timeout === 'number' && timeout > 0) {
+                timer = setTimeout(() => {
+                    observer.disconnect();
+                    reject(`在${timeout}ms内，未找到元素：${selector}`);
+                }, timeout);
+            }
             const observer = new MutationObserver(() => {
                 const elem = document.querySelector(selector);
                 if (elem) {
-                    clearTimeout(timer);
+                    if (timer) clearTimeout(timer);
                     observer.disconnect();
                     resolve(elem);
                 }
@@ -49,8 +49,8 @@
     };
 
 
-    await waitForElement('.input-guide-v2', 5000); // 在.input-guide-v2出现前的对话会被清空，所以等它加载
     const chat = await waitForElement('div[contenteditable="true"]'); // ql-editor
+    await waitForElement('.input-guide-v2', 3000); // 在.input-guide-v2出现前的对话会被清空，所以等它加载
     chat.focus();
     await delay(100);
     simulateInput(chat, query);

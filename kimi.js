@@ -39,7 +39,7 @@
         elem.dispatchEvent(new KeyboardEvent(event, { key: 'Enter', keyCode: 13, bubbles: true }));
     };
 
-    const chat = await waitForElement('.chat-input-editor');
+    const chat = await waitForElement('[data-lexical-editor="true"]');
     chat.focus();
     await delay(100);
     simulateInput(chat, query);

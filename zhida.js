@@ -11,8 +11,6 @@
 
 (async () => {
     'use strict';
-    const query = new URLSearchParams(window.location.search).get('q');
-    if (!query) return;
 
     const waitForElement = (selector) => {
         return new Promise((resolve) => {
@@ -48,6 +46,8 @@
         });
     };
 
+    const query = new URLSearchParams(window.location.search).get('q');
+    if (!query) return;
 
     const chat = await waitForElement('div[contenteditable="true"]'); // draft.js editor
     chat.focus();

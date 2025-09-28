@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         给baidu的ai搜索添加q查询参数：chat.baidu.com/?q={query}
 // @namespace    http://tampermonkey.net/
-// @version      2025.9.10
+// @version      2025.9.28
 // @description  从URL中提取q查询参数，填入对话框，提交搜索
 // @author       smilingpoplar
 // @match        https://chat.baidu.com/*
@@ -11,8 +11,6 @@
 
 (async () => {
     'use strict';
-    const query = new URLSearchParams(window.location.search).get('q');
-    if (!query) return;
 
     const waitForElement = (selector) => {
         return new Promise((resolve) => {
@@ -39,6 +37,9 @@
         elem.dispatchEvent(new KeyboardEvent(event, { key: 'Enter', keyCode: 13, bubbles: true }));
     };
 
+
+    const query = new URLSearchParams(window.location.search).get('q');
+    if (!query) return;
 
     const chat = await waitForElement('#chat-textarea');
     chat.focus();

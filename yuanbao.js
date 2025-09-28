@@ -12,8 +12,6 @@
 
 (async () => {
     'use strict';
-    const query = new URLSearchParams(window.location.search).get('q');
-    if (!query) return;
 
     const waitForElement = (selector, timeout) => {
         return new Promise((resolve, reject) => {
@@ -49,8 +47,12 @@
     };
 
 
+    const query = new URLSearchParams(window.location.search).get('q');
+    if (!query) return;
+
     const chat = await waitForElement('div[contenteditable="true"]'); // ql-editor
     await waitForElement('.input-guide-v2', 3000); // 在.input-guide-v2出现前的对话会被清空，所以等它加载
+
     chat.focus();
     await delay(100);
     simulateInput(chat, query);

@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         给qwen网站添加q查询参数（用#伪?）：chat.qwen.ai/#q={query}
+// @name         给阿里qwen网站添加q查询参数（用#伪?）：chat.qwen.ai/#q={query}
 // @namespace    http://tampermonkey.net/
-// @version      2025.9.14
+// @version      2025.9.28
 // @description  从URL中提取q查询参数（用#伪?以避免触发访问验证），填入对话框，提交搜索
 // @author       smilingpoplar
 // @match        https://chat.qwen.ai/*
@@ -11,9 +11,6 @@
 
 (async () => {
     'use strict';
-    const queryString = location.hash.substring(1)
-    const query = new URLSearchParams(queryString).get('q');
-    if (!query) return;
 
     const waitForElement = (selector) => {
         return new Promise((resolve) => {
@@ -39,6 +36,11 @@
     const simulateEnter = (elem, event = 'keydown') => {
         elem.dispatchEvent(new KeyboardEvent(event, { key: 'Enter', keyCode: 13, bubbles: true }));
     };
+
+
+    const queryString = location.hash.substring(1)
+    const query = new URLSearchParams(queryString).get('q');
+    if (!query) return;
 
     const chat = await waitForElement("#chat-input");
     document.querySelectorAll('button.chat-input-feature-btn').forEach(btn => btn.click()); // 开启所有特性

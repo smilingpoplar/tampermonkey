@@ -11,8 +11,6 @@
 
 (async () => {
     'use strict';
-    const query = new URLSearchParams(window.location.search).get('q');
-    if (!query) return;
 
     const waitForElement = (selector) => {
         return new Promise((resolve) => {
@@ -38,6 +36,10 @@
     const simulateEnter = (elem, event = 'keydown') => {
         elem.dispatchEvent(new KeyboardEvent(event, { key: 'Enter', keyCode: 13, bubbles: true }));
     };
+
+
+    const query = new URLSearchParams(window.location.search).get('q');
+    if (!query) return;
 
     const chat = await waitForElement('div[contenteditable="true"]'); // lexical editor
     chat.focus();

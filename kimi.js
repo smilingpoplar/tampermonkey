@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         给kimi网站添加q查询参数：www.kimi.com/?q={query}
 // @namespace    http://tampermonkey.net/
-// @version      2025.9.13
+// @version      2025.9.28
 // @description  从URL中提取q查询参数，填入对话框，提交搜索
 // @author       smilingpoplar
 // @match        https://www.kimi.com/*
@@ -39,7 +39,7 @@
         elem.dispatchEvent(new KeyboardEvent(event, { key: 'Enter', keyCode: 13, bubbles: true }));
     };
 
-    const chat = await waitForElement('[data-lexical-editor="true"]');
+    const chat = await waitForElement('div[contenteditable="true"]'); // lexical editor
     chat.focus();
     await delay(100);
     simulateInput(chat, query);

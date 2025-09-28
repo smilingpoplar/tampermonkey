@@ -41,7 +41,7 @@
     };
 
 
-    const chat = await waitForElement('.ql-editor');
+    const chat = await waitForElement('div[contenteditable="true"]'); // ql-editor
     chat.focus();
     await delay(100);
     simulateInput(chat, query);

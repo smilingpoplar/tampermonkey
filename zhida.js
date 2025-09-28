@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         给知乎直答网站添加q查询参数：zhida.zhihu.com/?q={query}
 // @namespace    http://tampermonkey.net/
-// @version      2025.9.13
+// @version      2025.9.28
 // @description  从URL中提取q查询参数，填入对话框，提交搜索
 // @author       smilingpoplar
 // @match        https://zhida.zhihu.com/*
@@ -49,7 +49,7 @@
     };
 
 
-    const chat = await waitForElement(".public-DraftEditor-content");
+    const chat = await waitForElement('div[contenteditable="true"]'); // draft.js editor
     chat.focus();
     await delay(100);
     simulateInput(chat, query);

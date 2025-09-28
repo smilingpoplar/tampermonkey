@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         给deepseek网站添加q查询参数：chat.deepseek.com/?q={query}
 // @namespace    http://tampermonkey.net/
-// @version      2025.9.10
+// @version      2025.9.28
 // @description  从URL中提取q查询参数，填入对话框，提交搜索
 // @author       smilingpoplar
 // @match        https://chat.deepseek.com/*
@@ -32,9 +32,8 @@
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
     const simulateInput = (elem, value) => {
-        const nativeSetter = Object.getOwnPropertyDescriptor(elem.constructor.prototype, "value")?.set;
-        nativeSetter?.call(elem, value);
-        elem.dispatchEvent(new Event("input", { bubbles: true }));
+        elem.textContent = value;
+        elem.dispatchEvent(new InputEvent('input', { bubbles: true }));
     }
     const simulateEnter = (elem, event = 'keydown') => {
         elem.dispatchEvent(new KeyboardEvent(event, { key: 'Enter', keyCode: 13, bubbles: true }));

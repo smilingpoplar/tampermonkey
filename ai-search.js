@@ -1,14 +1,15 @@
 // ==UserScript==
-// @name         给AI搜索网站添加q查询参数，支持deepseek,qwen,kimi,腾讯元宝,知乎直答,gemini
+// @name         给AI搜索网站添加q查询参数，支持deepseek,腾讯元宝,知乎直答,kimi,阿里qwen,字节豆包,gemini
 // @namespace    http://tampermonkey.net/
 // @version      2025.9.28
-// @description  从URL中提取q查询参数，填入对话框，提交搜索
+// @description  从URL中提取q查询参数，填入对话框，提交搜索。deepseek：chat.deepseek.com/?q={query}，腾讯元宝：yuanbao.tencent.com/?q={query}，知乎直答：zhida.zhihu.com/?q={query}，kimi：www.kimi.com/?q={query}，阿里qwen（用#伪?以免验证）：chat.qwen.ai/#q={query}，字节豆包：www.doubao.com/?q={query}，gemini：gemini.google.com/?q={query}。
 // @author       smilingpoplar
 // @match        https://chat.deepseek.com/*
 // @match        https://yuanbao.tencent.com/*
 // @match        https://zhida.zhihu.com/*
-// @match        https://chat.qwen.ai/*
 // @match        https://www.kimi.com/*
+// @match        https://chat.qwen.ai/*
+// @match        https://www.doubao.com/*
 // @match        https://gemini.google.com/*
 // @run-at       document-start
 // @license      MIT
@@ -104,6 +105,9 @@
             simulateInput: simulateInput.insertText,
             simulateEnter: simulateEnter.react
         },
+        'www.kimi.com': {
+            simulateInput: simulateInput.textContentWithData,
+        },
         'chat.qwen.ai': {
             getQuery: getQuery.hash,
             selector: '#chat-input',
@@ -114,8 +118,8 @@
                 document.querySelectorAll('button.chat-input-feature-btn').forEach(btn => btn.click());
             }
         },
-        'www.kimi.com': {
-            simulateInput: simulateInput.textContentWithData,
+        'www.doubao.com': {
+            selector: 'textarea.semi-input-textarea'
         }
     };
 

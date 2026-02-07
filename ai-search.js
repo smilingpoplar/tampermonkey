@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         给AI搜索网站添加q查询参数，支持deepseek,腾讯元宝,知乎直答,kimi,阿里qwen,字节豆包,gemini
 // @namespace    http://tampermonkey.net/
-// @version      2025.12.21
-// @description  从URL中提取q查询参数，填入对话框，提交搜索。deepseek：chat.deepseek.com/?q={query}，腾讯元宝：yuanbao.tencent.com/?q={query}，知乎直答：zhida.zhihu.com/?q={query}，kimi：www.kimi.com/?q={query}，阿里qwen（用#伪?以免验证）：chat.qwen.ai/#q={query}，字节豆包：www.doubao.com/?q={query}，gemini：gemini.google.com/?q={query}。
+// @version      2026.2.7
+// @description  从URL中提取q查询参数，填入对话框，提交搜索。deepseek：chat.deepseek.com/?q={query}，腾讯元宝：yuanbao.tencent.com/?q={query}，知乎直答：zhida.zhihu.com/?q={query}，kimi：www.kimi.com/?q={query}，阿里qwen：chat.qwen.ai/?q={query}或www.qianwen.com/?q={query}，字节豆包：www.doubao.com/?q={query}，gemini：gemini.google.com/?q={query}。
 // @author       smilingpoplar
 // @match        https://chat.deepseek.com/*
 // @match        https://yuanbao.tencent.com/*
@@ -44,7 +44,15 @@
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
     const getQuery = {
-        search: () => new URLSearchParams(window.location.search).get('q'),
+        search: () => {
+            const url = new URL(window.location.href);
+            const q = url.searchParams.get('q');
+            if (q) {
+                url.searchParams.delete('q');
+                window.history.replaceState({}, '', url.toString());
+            }
+            return q;
+        },
         hash: () => {
             const queryString = location.hash.substring(1);
             return new URLSearchParams(queryString).get('q');
@@ -109,8 +117,7 @@
             simulateInput: simulateInput.textContentWithData,
         },
         'chat.qwen.ai': {
-            getQuery: getQuery.hash,
-            selector: '#chat-input'
+            selector: 'textarea.message-input-textarea'
         },
         'www.doubao.com': {
             selector: 'textarea.semi-input-textarea'

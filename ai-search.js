@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         给AI搜索网站添加q查询参数，支持deepseek,腾讯元宝,知乎直答,kimi,智谱glm,阿里qwen,字节豆包,gemini
+// @name         给AI搜索网站添加q查询参数，支持deepseek,腾讯元宝,知乎直答,kimi,智谱glm,阿里qwen,minimax,字节豆包,gemini
 // @namespace    http://tampermonkey.net/
-// @version      2026.2.9
-// @description  从URL中提取q查询参数，填入对话框，提交搜索。deepseek：chat.deepseek.com/?q={query}，腾讯元宝：yuanbao.tencent.com/?q={query}，知乎直答：zhida.zhihu.com/?q={query}，kimi：www.kimi.com/?q={query}，智谱glm：https://chatglm.cn/?q={query}或https://chat.z.ai/?q={query}，阿里qwen：chat.qwen.ai/?q={query}或www.qianwen.com/?q={query}，字节豆包：www.doubao.com/?q={query}，gemini：gemini.google.com/?q={query}。
+// @version      2026.2.14
+// @description  从URL中提取q查询参数，填入对话框，提交搜索。deepseek：chat.deepseek.com/?q={query}，腾讯元宝：yuanbao.tencent.com/?q={query}，知乎直答：zhida.zhihu.com/?q={query}，kimi：www.kimi.com/?q={query}，智谱glm：chatglm.cn/?q={query}或chat.z.ai/?q={query}，阿里qwen：chat.qwen.ai/?q={query}或www.qianwen.com/?q={query}，minimax：agent.minimaxi.com/?q={query}，字节豆包：www.doubao.com/?q={query}，gemini：gemini.google.com/?q={query}。
 // @author       smilingpoplar
 // @match        https://chat.deepseek.com/*
 // @match        https://yuanbao.tencent.com/*
@@ -10,6 +10,7 @@
 // @match        https://www.kimi.com/*
 // @match        https://chatglm.cn/*
 // @match        https://chat.qwen.ai/*
+// @match        https://agent.minimaxi.com/*
 // @match        https://www.doubao.com/*
 // @match        https://gemini.google.com/*
 // @run-at       document-start

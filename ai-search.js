@@ -102,7 +102,7 @@
     };
     const siteConfigs = {
         'chat.deepseek.com': {
-            selector: 'textarea.ds-scroll-area'
+            selector: 'textarea'
         },
         'yuanbao.tencent.com': {
             beforeInput: async () => {
@@ -118,14 +118,14 @@
             simulateInput: simulateInput.textContentWithData
         },
         'chatglm.cn': {
-            selector: '#search-input-box textarea',
+            selector: 'textarea',
             simulateInput: simulateInput.value
         },
         'chat.qwen.ai': {
-            selector: 'textarea.message-input-textarea'
+            selector: 'textarea'
         },
         'www.doubao.com': {
-            selector: 'textarea.semi-input-textarea'
+            selector: 'textarea'
         }
     };
 

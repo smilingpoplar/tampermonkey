@@ -1,14 +1,15 @@
 // ==UserScript==
-// @name         给AI搜索网站添加q查询参数，支持deepseek,智谱glm,kimi,minimax,阿里qwen,字节豆包,腾讯元宝,知乎直答,gemini
+// @name         给AI搜索网站添加q查询参数，支持deepseek,智谱glm,kimi,minimax,小米mimo,阿里qwen,字节豆包,腾讯元宝,知乎直答,gemini
 // @namespace    http://tampermonkey.net/
 // @version      2026.5.30
-// @description  从URL中提取q查询参数，填入对话框，提交搜索。deepseek：chat.deepseek.com/?q={query}，智谱glm：chatglm.cn/?q={query}或chat.z.ai/?q={query}，kimi：www.kimi.com/?q={query}，minimax：agent.minimaxi.com/?q={query}，阿里qwen：chat.qwen.ai/?q={query}或www.qianwen.com/?q={query}，字节豆包：www.doubao.com/?q={query}，腾讯元宝：yuanbao.tencent.com/?q={query}，知乎直答：zhida.zhihu.com/?q={query}，gemini：gemini.google.com/?q={query}。
+// @description  从URL中提取q查询参数，填入对话框，提交搜索。deepseek：chat.deepseek.com/?q={query}，智谱glm：chatglm.cn/?q={query}或chat.z.ai/?q={query}，kimi：www.kimi.com/?q={query}，minimax：agent.minimaxi.com/?q={query}，小米mimo：aistudio.xiaomimimo.com/#/c?q={query}，阿里qwen：chat.qwen.ai/?q={query}或www.qianwen.com/?q={query}，字节豆包：www.doubao.com/?q={query}，腾讯元宝：yuanbao.tencent.com/?q={query}，知乎直答：zhida.zhihu.com/?q={query}，gemini：gemini.google.com/?q={query}。
 // @author       smilingpoplar
 // @match        https://chat.deepseek.com/*
 // @match        https://chatglm.cn/*
 // @match        https://chat.z.ai/*
 // @match        https://www.kimi.com/*
 // @match        https://agent.minimaxi.com/*
+// @match        https://aistudio.xiaomimimo.com/*
 // @match        https://chat.qwen.ai/*
 // @match        https://www.doubao.com/*
 // @match        https://yuanbao.tencent.com/*
@@ -58,8 +59,8 @@
             return q;
         },
         hash: () => {
-            const queryString = location.hash.substring(1);
-            return new URLSearchParams(queryString).get('q');
+            const str = location.hash.split('?')[1] ?? '';
+            return new URLSearchParams(str).get('q')
         }
     };
     const simulateInput = {
@@ -116,6 +117,10 @@
         },
         'www.kimi.com': {
             simulateInput: simulateInput.textContentWithData
+        },
+        'aistudio.xiaomimimo.com': {
+            getQuery: getQuery.hash,
+            selector: 'textarea'
         },
         'chat.qwen.ai': {
             selector: 'textarea'

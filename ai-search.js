@@ -1,17 +1,18 @@
 // ==UserScript==
-// @name         给AI搜索网站添加q查询参数，支持deepseek,腾讯元宝,知乎直答,kimi,智谱glm,阿里qwen,minimax,字节豆包,gemini
+// @name         给AI搜索网站添加q查询参数，支持deepseek,智谱glm,kimi,minimax,阿里qwen,字节豆包,腾讯元宝,知乎直答,gemini
 // @namespace    http://tampermonkey.net/
-// @version      2026.2.14
-// @description  从URL中提取q查询参数，填入对话框，提交搜索。deepseek：chat.deepseek.com/?q={query}，腾讯元宝：yuanbao.tencent.com/?q={query}，知乎直答：zhida.zhihu.com/?q={query}，kimi：www.kimi.com/?q={query}，智谱glm：chatglm.cn/?q={query}或chat.z.ai/?q={query}，阿里qwen：chat.qwen.ai/?q={query}或www.qianwen.com/?q={query}，minimax：agent.minimaxi.com/?q={query}，字节豆包：www.doubao.com/?q={query}，gemini：gemini.google.com/?q={query}。
+// @version      2026.5.30
+// @description  从URL中提取q查询参数，填入对话框，提交搜索。deepseek：chat.deepseek.com/?q={query}，智谱glm：chatglm.cn/?q={query}或chat.z.ai/?q={query}，kimi：www.kimi.com/?q={query}，minimax：agent.minimaxi.com/?q={query}，阿里qwen：chat.qwen.ai/?q={query}或www.qianwen.com/?q={query}，字节豆包：www.doubao.com/?q={query}，腾讯元宝：yuanbao.tencent.com/?q={query}，知乎直答：zhida.zhihu.com/?q={query}，gemini：gemini.google.com/?q={query}。
 // @author       smilingpoplar
 // @match        https://chat.deepseek.com/*
+// @match        https://chatglm.cn/*
+// @match        https://chat.z.ai/*
+// @match        https://www.kimi.com/*
+// @match        https://agent.minimaxi.com/*
+// @match        https://chat.qwen.ai/*
+// @match        https://www.doubao.com/*
 // @match        https://yuanbao.tencent.com/*
 // @match        https://zhida.zhihu.com/*
-// @match        https://www.kimi.com/*
-// @match        https://chatglm.cn/*
-// @match        https://chat.qwen.ai/*
-// @match        https://agent.minimaxi.com/*
-// @match        https://www.doubao.com/*
 // @match        https://gemini.google.com/*
 // @run-at       document-start
 // @license      MIT
@@ -40,10 +41,11 @@
                     resolve(elem);
                 }
             });
-            observer.observe(document.documentElement, { childList: true, subtree: true });
+            observer.observe(document, { childList: true, subtree: true });
         });
     };
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
+
 
     const getQuery = {
         search: () => {
@@ -105,6 +107,22 @@
         'chat.deepseek.com': {
             selector: 'textarea'
         },
+        'chatglm.cn': {
+            selector: 'textarea',
+            simulateInput: simulateInput.value
+        },
+        'chat.z.ai': {
+            selector: 'textarea'
+        },
+        'www.kimi.com': {
+            simulateInput: simulateInput.textContentWithData
+        },
+        'chat.qwen.ai': {
+            selector: 'textarea'
+        },
+        'www.doubao.com': {
+            selector: 'textarea'
+        },
         'yuanbao.tencent.com': {
             beforeInput: async () => {
                 // 在.input-guide-v2出现前的对话会被清空，所以等它加载
@@ -114,19 +132,6 @@
         'zhida.zhihu.com': {
             simulateInput: simulateInput.insertText,
             simulateEnter: simulateEnter.react
-        },
-        'www.kimi.com': {
-            simulateInput: simulateInput.textContentWithData
-        },
-        'chatglm.cn': {
-            selector: 'textarea',
-            simulateInput: simulateInput.value
-        },
-        'chat.qwen.ai': {
-            selector: 'textarea'
-        },
-        'www.doubao.com': {
-            selector: 'textarea'
         }
     };
 
@@ -137,8 +142,8 @@
     if (!query) return;
 
     const editor = await waitForElement(config.selector);
+    await delay(500);
     await config.beforeInput?.();
-
     editor.focus();
     await delay(100);
     config.simulateInput(editor, query);

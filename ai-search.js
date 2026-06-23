@@ -128,12 +128,6 @@
         'www.doubao.com': {
             selector: 'textarea'
         },
-        'yuanbao.tencent.com': {
-            beforeInput: async () => {
-                // 在.input-guide-v2出现前的对话会被清空，所以等它加载
-                await waitForElement('.input-guide-v2', 3000);
-            }
-        },
         'zhida.zhihu.com': {
             simulateInput: simulateInput.insertText,
             simulateEnter: simulateEnter.react

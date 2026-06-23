@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         给AI搜索网站添加q查询参数，支持deepseek,智谱glm,kimi,minimax,小米mimo,阿里qwen,字节豆包,腾讯元宝,知乎直答,gemini
 // @namespace    http://tampermonkey.net/
-// @version      2026.5.30
+// @version      2026.6.23
 // @description  从URL中提取q查询参数，填入对话框，提交搜索。deepseek：chat.deepseek.com/?q={query}，智谱glm：chatglm.cn/?q={query}或chat.z.ai/?q={query}，kimi：www.kimi.com/?q={query}，minimax：agent.minimaxi.com/?q={query}，小米mimo：aistudio.xiaomimimo.com/#/c?q={query}，阿里qwen：chat.qwen.ai/?q={query}或www.qianwen.com/?q={query}，字节豆包：www.doubao.com/?q={query}，腾讯元宝：yuanbao.tencent.com/?q={query}，知乎直答：zhida.zhihu.com/?q={query}，gemini：gemini.google.com/?q={query}。
 // @author       smilingpoplar
 // @match        https://chat.deepseek.com/*
@@ -22,8 +22,8 @@
 (async () => {
     'use strict';
 
-    const waitForElement = (selector, timeout) => {
-        return new Promise((resolve, reject) => {
+    const waitForElement = (selector, timeout) =>
+        new Promise((resolve, reject) => {
             const elem = document.querySelector(selector);
             if (elem) return resolve(elem);
 
@@ -44,7 +44,6 @@
             });
             observer.observe(document, { childList: true, subtree: true });
         });
-    };
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
 
@@ -131,6 +130,10 @@
         'zhida.zhihu.com': {
             simulateInput: simulateInput.insertText,
             simulateEnter: simulateEnter.react
+        },
+        'gemini.google.com': {
+            simulateInput: simulateInput.insertText,
+            simulateEnter: (elem) => simulateEnter.keyboard()(document.querySelector('rich-textarea'))
         }
     };
 
@@ -142,7 +145,6 @@
 
     const editor = await waitForElement(config.selector);
     await delay(500);
-    await config.beforeInput?.();
     editor.focus();
     await delay(100);
     config.simulateInput(editor, query);
